@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+db.sqlite3
+.secret_key
+logs
+media
+docs
+deployment
+*.dump
+**/__pycache__
+**/tests*.py
+node_modules

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python build.py",
+  "functions": {
+    "ums_project/wsgi.py": { "maxDuration": 60 }
+  },
+  "crons": [
+    { "path": "/internal/cron/", "schedule": "0 3 * * *" }
+  ]
+}
