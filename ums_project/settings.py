@@ -586,7 +586,8 @@ STORAGES = {
             # manifest requirement.
             "whitenoise.storage.CompressedStaticFilesStorage"
             if DEBUG else
-            "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            ("ums_project.storage.ForgivingManifestStorage" if SERVERLESS
+             else "whitenoise.storage.CompressedManifestStaticFilesStorage")
         ),
     },
 }
@@ -1012,15 +1013,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGS_DIR = BASE_DIR / "logs"
 
-try:
-    LOGS_DIR.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-    _file_logging_available = True
-
-except OSError:
-    _file_logging_available = False
+# A log FILE is only used when the disk is really writable. Serverless hosts
+# (Vercel) have a read-only disk - and a `logs/` folder may even exist inside
+# the deployed bundle - so a successful mkdir proves nothing: actually open the
+# file for appending. On any failure, log to the console only (Vercel captures
+# console output in its Logs tab).
+_file_logging_available = False
+if not SERVERLESS:
+    try:
+        LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        with open(LOGS_DIR / "errors.log", "a", encoding="utf-8"):
+            pass
+        _file_logging_available = True
+    except OSError:
+        _file_logging_available = False
 
 
 LOGGING = {
