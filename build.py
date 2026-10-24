@@ -2,7 +2,7 @@
 
 1. collectstatic  - so WhiteNoise can serve /static/ even if the CDN step is skipped.
 2. (optional) migrate + seed_roles against the production database when
-   VERCEL_RUN_MIGRATIONS=1. Leave it off if you prefer to run migrations by hand.
+   RUN_MIGRATIONS=1 (or VERCEL_RUN_MIGRATIONS=1). Leave it off if you prefer to run migrations by hand.
 """
 import os
 import subprocess
@@ -39,14 +39,15 @@ def create_first_admin():
 
 def main():
     run('collectstatic', '--noinput')
-    if os.environ.get('VERCEL_RUN_MIGRATIONS') == '1':
+    # Accept RUN_MIGRATIONS=1 (standard) or VERCEL_RUN_MIGRATIONS=1
+    if os.environ.get('RUN_MIGRATIONS') == '1' or os.environ.get('VERCEL_RUN_MIGRATIONS') == '1':
         if not os.environ.get('DATABASE_URL'):
-            sys.exit('VERCEL_RUN_MIGRATIONS=1 but DATABASE_URL is not set.')
+            sys.exit('RUN_MIGRATIONS=1 is set, but DATABASE_URL is missing.')
         run('migrate', '--noinput')
         run('seed_roles')
         create_first_admin()
     else:
-        print('Skipping migrations (set VERCEL_RUN_MIGRATIONS=1 to run them during the build).')
+        print('Skipping migrations (set RUN_MIGRATIONS=1 to run them during the build).')
 
 
 if __name__ == '__main__':
