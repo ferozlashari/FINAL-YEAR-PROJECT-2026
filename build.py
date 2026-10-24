@@ -14,6 +14,29 @@ def run(*args):
     subprocess.run([sys.executable, 'manage.py', *args], check=True)
 
 
+def create_first_admin():
+    """Create the first System Administrator from Vercel environment variables.
+
+    Needs DJANGO_SUPERUSER_USERNAME and DJANGO_SUPERUSER_PASSWORD (and optionally
+    DJANGO_SUPERUSER_EMAIL). Safe to run on every deploy: an existing user is left
+    untouched. Remove the PASSWORD variable from Vercel after the first login.
+    """
+    if not (os.environ.get('DJANGO_SUPERUSER_USERNAME') and os.environ.get('DJANGO_SUPERUSER_PASSWORD')):
+        print('No DJANGO_SUPERUSER_* variables set: skipping first-admin creation.')
+        return
+    print('>> createsuperuser --noinput (existing users are left untouched)', flush=True)
+    result = subprocess.run([sys.executable, 'manage.py', 'createsuperuser', '--noinput'],
+                            capture_output=True, text=True)
+    out = (result.stdout + result.stderr).strip()
+    if result.returncode == 0:
+        print('First administrator created.')
+    elif 'already taken' in out or 'already exists' in out:
+        print('Administrator already exists: nothing changed.')
+    else:
+        print(out[-600:])
+        sys.exit('Could not create the first administrator.')
+
+
 def main():
     run('collectstatic', '--noinput')
     if os.environ.get('VERCEL_RUN_MIGRATIONS') == '1':
@@ -21,6 +44,7 @@ def main():
             sys.exit('VERCEL_RUN_MIGRATIONS=1 but DATABASE_URL is not set.')
         run('migrate', '--noinput')
         run('seed_roles')
+        create_first_admin()
     else:
         print('Skipping migrations (set VERCEL_RUN_MIGRATIONS=1 to run them during the build).')
 
