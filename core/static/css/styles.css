@@ -478,3 +478,29 @@ body.text-only .panel{ box-shadow:none; }
 
 /* Self-contained analytics components (no third-party chart CDN required). */
 .metric-row{margin:0 0 14px}.metric-label{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;font-size:.9rem}.metric-track,.stacked-bar{height:10px;border-radius:999px;background:var(--border,#e5e7eb);overflow:hidden;display:flex}.metric-track span,.stacked-bar span{display:block;height:100%;border-radius:999px;background:currentColor}.metric-track span{color:var(--primary,#2563eb)}.stack-paid{color:#16a34a}.stack-outstanding{color:#dc2626}.stack-present{color:#2563eb}.stack-absent{color:#d97706}.stat-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.stat-box{padding:16px;border:1px solid var(--border,#e5e7eb);border-radius:12px}.stat-box span{display:block;color:var(--muted,#6b7280);font-size:.82rem;margin-bottom:5px}.stat-box strong{font-size:1.2rem}.small{font-size:.8rem}
+
+
+/* ==========================================================================
+   Phone / small-screen fixes
+   The header's action buttons were forced onto one line (white-space:nowrap),
+   so the page became wider than the phone: the purple bar stopped short, the
+   user name and Logout button stuck out, and the browser scrolled sideways or
+   zoomed the whole page out. Let the header wrap and keep content inside the
+   screen.
+   ========================================================================== */
+@media (max-width:900px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .app-shell,.main-area,.main{max-width:100%;min-width:0}
+  .site-header{padding:10px 0}
+  .header-row{gap:10px;padding:0 12px}
+  .brand-full-name{display:none}
+  .global-search{flex:1 1 100%;order:3;max-width:none;min-width:0}
+  .site-header .actions{flex:1 1 100%;order:4;flex-wrap:wrap;white-space:normal;margin-bottom:0;row-gap:6px}
+  .site-header .actions .btn{padding:7px 10px;font-size:.82rem;margin-right:0}
+  .main{padding:20px 14px 48px}
+  .main .panel,.main .card{overflow-x:auto;max-width:100%}
+  img,video,canvas{max-width:100%;height:auto}
+}
+.chart-grid{grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}
+.grid{grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr))}
+.stat-grid{grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr))}
