@@ -3,7 +3,7 @@
 // does NOT cache API/auth pages or data pages, so data always stays fresh -
 // this is about installability and offline app-shell, not full offline data
 // access.
-const CACHE = 'ums-shell-v2';
+const CACHE = 'ums-shell-v3';
 const SHELL_ASSETS = ['/static/css/styles.css', '/static/js/scripts.js', '/static/manifest.json', '/static/offline.html'];
 
 self.addEventListener('install', (event) => {
